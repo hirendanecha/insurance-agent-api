@@ -5,14 +5,15 @@ const { getPagination, getCount, getPaginationData } = require("../helpers/fn");
 
 // Admin Api //
 exports.findAllCommunity = async function (req, res) {
-  const { selectedCard, selectedCountry, selectedState, selectedAreas } =
-    req.body;
+  // const { selectedCard, selectedCountry, selectedState, selectedAreas } =
+  //   req.body;
+  const { selectedCard } = req.body;
   console.log(req.body);
   const searchData = await Community.findAllCommunity(
-    selectedCard,
-    selectedCountry,
-    selectedState,
-    selectedAreas
+    selectedCard
+    // selectedCountry,
+    // selectedState,
+    // selectedAreas
   );
   return res.send(searchData);
 };

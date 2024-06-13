@@ -18,26 +18,30 @@ var Community = function (community) {
   this.Zip = community?.Zip;
   this.County = community?.County;
   this.address = community?.address;
+  this.applicationType = community?.applicationType;
+  this.companyName = community?.companyName;
+  this.agentName = community?.agentName;
 };
 
 Community.findAllCommunity = async function (
-  selectedCard,
-  selectedCountry,
-  selectedState,
-  selectedAreas
+  selectedCard
+  // selectedCountry,
+  // selectedState,
+  // selectedAreas
 ) {
   console.log(selectedCard, "selectedCard");
-  let whereCondition = `c.pageType = 'community' AND c.isApprove = 'Y' ${
-    selectedCountry || selectedState
-      ? `AND c.Country LIKE '%${selectedCountry}%' AND c.State LIKE '%${selectedState}%'`
-      : ""
-  }`;
+  let whereCondition = `c.pageType = 'community' AND c.isApprove = 'Y'`;
+  // ${
+  //   selectedCountry || selectedState
+  //     ? `AND c.Country LIKE '%${selectedCountry}%' AND c.State LIKE '%${selectedState}%'`
+  //     : ""
+  // }`;
   if (selectedCard) {
     whereCondition += ` AND pe.eId in (${selectedCard})`;
   }
-  if (selectedAreas?.length) {
-    whereCondition += ` AND pa.aId in (${selectedAreas})`;
-  }
+  // if (selectedAreas?.length) {
+  //   whereCondition += ` AND pa.aId in (${selectedAreas})`;
+  // }
   // const searchCount = await executeQuery(
   //   `SELECT count(c.Id) as count FROM community as c WHERE ${whereCondition}`
   // );
@@ -61,15 +65,15 @@ Community.findAllCommunity = async function (
     //   "select cm.profileId from communityMembers as cm where cm.communityId = ?;";
     const query1 =
       "select pe.eId,eh.name from practitioner_emphasis as pe left join emphasis_healing as eh on eh.eId = pe.eId where pe.communityId =? ";
-    const query2 =
-      "select pa.aId,ah.name from practitioner_area as pa left join area_healing as ah on ah.aId = pa.aId where pa.communityId =? ";
+    // const query2 =
+    //   "select pa.aId,ah.name from practitioner_area as pa left join area_healing as ah on ah.aId = pa.aId where pa.communityId =? ";
     if (Object.hasOwnProperty.call(communityList, key)) {
       const community = communityList[key];
       const values1 = [community.Id];
       const emphasis = await executeQuery(query1, values1);
-      const areas = await executeQuery(query2, values1);
+      // const areas = await executeQuery(query2, values1);
       community.emphasis = emphasis;
-      community.areas = areas;
+      // community.areas = areas;
       localCommunities.push(community);
     }
   }
