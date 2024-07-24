@@ -403,17 +403,41 @@ Community.getJoinedCommunityByProfileId = async function (id, pageType) {
   return joinedCommunityList;
 };
 
-const emphasisData = req.body.emphasis;
-const removeEmphasisList = req.body?.removeEmphasisList;
-const areasData = req.body.areas;
-const removeAreaList = req.body?.removeAreasList;
-const emphasis = await Community.addEmphasis(
-  Id,
-  emphasisData,
+Community.addEmphasis = async function (
+  communityId,
+  emphasisList,
   removeEmphasisList
-);
-const areas = await Community.addAreas(Id, areasData, removeAreaList);
-console.log(emphasis, areas);
+) {
+  if (emphasisList.length) {
+    const newData = emphasisList
+      .map((element) => `(${communityId}, ${element})`)
+      .join(", ");
+    const query = `insert into practitioner_emphasis (communityId,eId) values ${newData}`;
+    const emphasis = await executeQuery(query);
+    return emphasis;
+  }
+  if (removeEmphasisList.length) {
+    const query = `delete from practitioner_emphasis where communityId = ${communityId} and eId in (${removeEmphasisList})`;
+    const interests = await executeQuery(query);
+    return interests;
+  }
+};
+
+Community.addAreas = async function (communityId, areaList, removeAreaList) {
+  if (areaList.length) {
+    const newData = areaList
+      .map((element) => `(${communityId}, ${element})`)
+      .join(", ");
+    const query = `insert into practitioner_area (communityId,aId) values ${newData}`;
+    const areas = await executeQuery(query);
+    return areas;
+  }
+  if (removeAreaList.length) {
+    const query = `delete from practitioner_area where communityId = ${communityId} and aId in (${removeAreaList})`;
+    const interests = await executeQuery(query);
+    return interests;
+  }
+};
 
 Community.getEmphasisAndArea = async function () {
   const query = "select * from emphasis_healing";
