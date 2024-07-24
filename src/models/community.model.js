@@ -403,27 +403,17 @@ Community.getJoinedCommunityByProfileId = async function (id, pageType) {
   return joinedCommunityList;
 };
 
-Community.addEmphasis = async function (communityId, data) {
-  if (data) {
-    const newData = data
-      .map((element) => `(${communityId}, ${element})`)
-      .join(", ");
-    const query = `insert into practitioner_emphasis (communityId,eId) values ${newData}`;
-    const emphasis = await executeQuery(query);
-    return emphasis;
-  }
-};
-
-Community.addAreas = async function (communityId, data) {
-  if (data) {
-    const newData = data
-      .map((element) => `(${communityId}, ${element})`)
-      .join(", ");
-    const query = `insert into practitioner_area (communityId,aId) values ${newData}`;
-    const areas = await executeQuery(query);
-    return areas;
-  }
-};
+const emphasisData = req.body.emphasis;
+const removeEmphasisList = req.body?.removeEmphasisList;
+const areasData = req.body.areas;
+const removeAreaList = req.body?.removeAreasList;
+const emphasis = await Community.addEmphasis(
+  Id,
+  emphasisData,
+  removeEmphasisList
+);
+const areas = await Community.addAreas(Id, areasData, removeAreaList);
+console.log(emphasis, areas);
 
 Community.getEmphasisAndArea = async function () {
   const query = "select * from emphasis_healing";
