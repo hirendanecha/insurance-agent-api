@@ -19,7 +19,7 @@ Appointments.findAndSearchAll = async (
   endDate
 ) => {
   let whereCondition = `${
-    search ? `a.lawyerName LIKE '%${search}%'` : ""
+    search ? `a.agentName LIKE '%${search}%'` : ""
   }`;
 
   if (startDate && endDate) {
@@ -37,7 +37,7 @@ Appointments.findAndSearchAll = async (
     }`
   );
   const searchData = await executeQuery(
-    `SELECT a.id, a.lawyerName, a.appointmentDateTime, a.createdDate,a.profileId,a.isCancelled,p.FirstName,p.LastName,p.ProfilePicName,p.Username FROM appointments as a left join profile as p on p.ID = a.profileId  ${
+    `SELECT a.id, a.agentName, a.appointmentDateTime, a.createdDate,a.profileId,a.isCancelled,p.FirstName,p.LastName,p.ProfilePicName,p.Username FROM appointments as a left join profile as p on p.ID = a.profileId  ${
       whereCondition ? `WHERE ${whereCondition} ` : ""
     } order by createdDate desc limit ? offset ?`,
     [limit, offset]
@@ -72,7 +72,7 @@ Appointments.findAppointmentByDate = async (date) => {
 
 Appointments.getPractitionerAppointments = async (id) => {
   const query =
-    "select a.*,p.Username,p.FirstName,p.LastName,p.ProfilePicName from appointments as a left join profile as p on p.ID = a.profileId where a.isCancelled = 'N' and a.lawyerProfileId = ?";
+    "select a.*,p.Username,p.FirstName,p.LastName,p.ProfilePicName from appointments as a left join profile as p on p.ID = a.profileId where a.isCancelled = 'N' and a.agentProfileId = ?";
   const values = [id];
   const appointmentList = await executeQuery(query, values);
   if (appointmentList) {
@@ -84,7 +84,7 @@ Appointments.getPractitionerAppointments = async (id) => {
 
 Appointments.getUserAppointments = async (id) => {
   const query =
-    "select a.*,p.Username,p.FirstName,p.LastName,p.ProfilePicName from appointments as a left join profile as p on p.ID = a.lawyerProfileId where a.isCancelled = 'N' and a.profileId = ?";
+    "select a.*,p.Username,p.FirstName,p.LastName,p.ProfilePicName from appointments as a left join profile as p on p.ID = a.agentProfileId where a.isCancelled = 'N' and a.profileId = ?";
   const values = [id];
   const appointmentList = await executeQuery(query, values);
   if (appointmentList) {

@@ -157,7 +157,7 @@ exports.sendAppointmentMailToUser = async (data) => {
   const [userData] = await this.executeQuery(query, values);
   const query1 =
     "select u.Email,p.FirstName,p.LastName,p.Username from users as u left join profile as p on p.UserID = u.Id where p.ID =?";
-  const values1 = [data.lawyerProfileId];
+  const values1 = [data.agentProfileId];
   const [practitionerData] = await this.executeQuery(query1, values1);
   console.log("practitionerData", practitionerData);
   if (userData) {
@@ -205,7 +205,7 @@ exports.sendAppointmentMailToPractitioner = async (data) => {
   const [userData] = await this.executeQuery(query, values);
   const query1 =
     "select u.Email,p.FirstName,p.LastName,p.Username from users as u left join profile as p on p.UserID = u.Id where p.ID =?";
-  const values1 = [data.lawyerProfileId];
+  const values1 = [data.agentProfileId];
   const [practitionerData] = await this.executeQuery(query1, values1);
   if (practitionerData) {
     let name = `Hi ${practitionerData.Username || practitionerData.FirstName}`;
@@ -271,6 +271,27 @@ const getIcalObjectInstance = async (
     },
   });
   return cal;
+};
+
+exports.cancelAppointmentNotificationMail = async (id, agentName) => {
+  console.log(id, agentName);
+  const query =
+    "select u.Email,p.FirstName,p.LastName,p.Username from users as u left join profile as p on p.UserID = u.Id where p.ID =?";
+  const values = [id];
+  const [data] = await this.executeQuery(query, values);
+  let name = data?.Username || data?.FirstName;
+  let msg = `Your appointment with ${agentName} has been cancelled, please book another slot!`;
+  let redirectUrl = `${environment.FRONTEND_URL}`;
+
+  const mailObj = {
+    email: data?.Email,
+    subject: "Insurance notification",
+    root: "../email-templates/notification.ejs",
+    templateData: { name: name, msg: msg, url: redirectUrl },
+  };
+
+  await email.sendMail(mailObj);
+  return;
 };
 
 exports.executeQuery = async (query, values = []) => {

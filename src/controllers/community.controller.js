@@ -66,10 +66,10 @@ exports.createCommunity = async function (req, res) {
       } else {
         if (community) {
           const emphasisData = req.body.emphasis;
-          const areasData = req.body.areas;
+          // const areasData = req.body.areas;
           const emphasis = await Community.addEmphasis(community, emphasisData);
-          const areas = await Community.addAreas(community, areasData);
-          console.log(emphasis, areas);
+          // const areas = await Community.addAreas(community, areasData);
+          // console.log(emphasis, areas);
         }
         return res.json({
           error: false,
@@ -88,15 +88,15 @@ exports.editCommunity = async function name(req, res) {
   if (community) {
     const emphasisData = req.body.emphasis;
     const removeEmphasisList = req.body?.removeEmphasisList;
-    const areasData = req.body.areas;
-    const removeAreaList = req.body?.removeAreasList;
+    // const areasData = req.body.areas;
+    // const removeAreaList = req.body?.removeAreasList;
     const emphasis = await Community.addEmphasis(
       Id,
       emphasisData,
       removeEmphasisList
     );
-    const areas = await Community.addAreas(Id, areasData, removeAreaList);
-    console.log(emphasis, areas);
+    // const areas = await Community.addAreas(Id, areasData, removeAreaList);
+    // console.log(emphasis, areas);
     return res.json({
       error: false,
       message: "update community successfully",

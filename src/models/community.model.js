@@ -226,8 +226,20 @@ Community.findCommunityById = async function (id) {
 };
 
 Community.findCommunityBySlug = async function (slug) {
-  const communityQuery =
-    "select c.*,p.Username, count(cm.profileId) as members from community as c left join profile as p on p.ID = c.profileId left join communityMembers as cm on cm.communityId = c.Id where c.slug=?";
+  const communityQuery = `SELECT 
+    c.*, 
+    p.Username, 
+    COUNT(cm.profileId) AS members 
+FROM 
+    community AS c 
+LEFT JOIN 
+    profile AS p ON p.ID = c.profileId 
+LEFT JOIN 
+    communityMembers AS cm ON cm.communityId = c.Id 
+WHERE 
+    c.slug = ? 
+GROUP BY 
+    c.Id, p.Username`;
   const communities = await executeQuery(communityQuery, [slug]);
   const community = communities?.[0] || {};
 
@@ -408,7 +420,7 @@ Community.addEmphasis = async function (
   emphasisList,
   removeEmphasisList
 ) {
-  if (emphasisList.length) {
+  if (emphasisList?.length) {
     const newData = emphasisList
       .map((element) => `(${communityId}, ${element})`)
       .join(", ");
@@ -416,7 +428,7 @@ Community.addEmphasis = async function (
     const emphasis = await executeQuery(query);
     return emphasis;
   }
-  if (removeEmphasisList.length) {
+  if (removeEmphasisList?.length) {
     const query = `delete from practitioner_emphasis where communityId = ${communityId} and eId in (${removeEmphasisList})`;
     const interests = await executeQuery(query);
     return interests;
